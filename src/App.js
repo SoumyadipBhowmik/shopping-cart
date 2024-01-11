@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React, { useState, useEffect } from 'react';
+import Cart from './components/Cart';
+import ProductList from './components/ProductList';
 
-function App() {
+const App = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch product data from the public folder
+    fetch('/products.json')  // Assuming products.json is in the public folder
+      .then(response => response.json())
+      .then(data => setProducts(data))
+      .catch(error => console.error('Error fetching product data:', error));
+  }, []);
+
+  const addToCart = (product) => {
+    setCartItems([...cartItems, product]);
+  };
+
+  const removeFromCart = (productId) => {
+    const updatedCart = cartItems.filter(item => item.id !== productId);
+    setCartItems(updatedCart);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Shopping Cart</h1>
+      <Cart cartItems={cartItems} removeFromCart={removeFromCart} />
+      <ProductList products={products} addToCart={addToCart} />
     </div>
   );
-}
+};
 
 export default App;
